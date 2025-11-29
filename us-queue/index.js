@@ -119,10 +119,19 @@ async function updateQueueInfo() {
   // Determine nickname based on queue status
   const nickname = isActive ? `Active - ${count}/8 Next` : `${count}/8 In Queue`;
   
-  // Create progress bar for status (green squares for filled, gray for empty)
-  const filledSquares = '🟩'.repeat(count);
-  const emptySquares = '⬜'.repeat(8 - count);
-  const progressBar = filledSquares + emptySquares;
+  // Create progress bar for status
+  let progressBar;
+  if (isActive) {
+    // Active queue: yellow for next queue players, green for the rest (total 8)
+    const yellowSquares = '🟨'.repeat(count);
+    const greenSquares = '🟩'.repeat(8 - count);
+    progressBar = yellowSquares + greenSquares;
+  } else {
+    // Normal queue: green for filled, gray for empty
+    const filledSquares = '🟩'.repeat(count);
+    const emptySquares = '⬜'.repeat(8 - count);
+    progressBar = filledSquares + emptySquares;
+  }
 
   // Update bot status (online/offline)
   try {
