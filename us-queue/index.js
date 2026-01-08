@@ -141,13 +141,13 @@ async function updateQueueInfo() {
     progressBar = yellowSquares + greenSquares;
   } else if (activeCount === 2) {
     // 2 active queues: all yellow + red for next queue
-    const redSquares = '🟥'.repeat(count);
+    const redSquares = '🟧'.repeat(count);
     const yellowSquares = '🟨'.repeat(8 - count);
     progressBar = redSquares + yellowSquares;
   } else {
     // 3+ active queues: all red + purple for next queue
-    const purpleSquares = '🟪'.repeat(count);
-    const redSquares = '🟥'.repeat(8 - count);
+    const purpleSquares = '🟥'.repeat(count);
+    const redSquares = '🟧'.repeat(8 - count);
     progressBar = purpleSquares + redSquares;
   }
 
