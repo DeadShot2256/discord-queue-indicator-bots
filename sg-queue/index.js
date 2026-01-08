@@ -25,7 +25,7 @@ const client = new Client({
 
 // Track previous state to only update on changes
 let previousCount = null;
-let previousActive = null;
+let previousActiveCount = null;
 
 // ----------------
 // API CALLS
@@ -53,7 +53,7 @@ async function getQueuePlayerCount() {
   }
 }
 
-async function isActiveQueue() {
+async function getActiveQueueCount() {
   try {
     const response = await fetch(
       `https://api.neatqueue.com/api/v1/matches/${MATCH_ID}`,
@@ -66,21 +66,22 @@ async function isActiveQueue() {
     );
     if (!response.ok) {
       console.error(`❌ NeatQueue Match Error: ${response.status}`);
-      return false;
+      return 0;
     }
     const data = await response.json();
     
     // Check if response is empty object (no active queue)
     if (Object.keys(data).length === 0) {
-      return false;
+      return 0;
     }
     
-    // Check if the queue ID exists in the response
+    // Count how many times the QUEUE_ID appears in the response
     const responseText = JSON.stringify(data);
-    return responseText.includes(QUEUE_ID);
+    const matches = responseText.match(new RegExp(QUEUE_ID, 'g'));
+    return matches ? matches.length : 0;
   } catch (err) {
     console.error("❌ Fetch Error (match):", err);
-    return false;
+    return 0;
   }
 }
 
@@ -97,40 +98,57 @@ async function updateQueueInfo() {
     return;
   }
 
-  const isActive = await isActiveQueue();
+  const activeCount = await getActiveQueueCount();
   
   // Check if anything changed
-  const hasChanged = (count !== previousCount || isActive !== previousActive);
+  const hasChanged = (count !== previousCount || activeCount !== previousActiveCount);
   
   if (!hasChanged) {
-    console.log(`⏭️ No changes (${count}/8, Active: ${isActive})`);
+    console.log(`⏭️ No changes (${count}/8, Active Queues: ${activeCount})`);
     return;
   }
   
-  console.log(`📊 Change detected! Count: ${previousCount} → ${count}, Active: ${previousActive} → ${isActive}`);
+  console.log(`📊 Change detected! Count: ${previousCount} → ${count}, Active Queues: ${previousActiveCount} → ${activeCount}`);
   
   // Update previous state
   previousCount = count;
-  previousActive = isActive;
+  previousActiveCount = activeCount;
   
   // Determine if bot should be online or offline
-  const shouldBeOnline = isActive || count > 0;
+  const shouldBeOnline = activeCount > 0 || count > 0;
   
   // Determine nickname based on queue status
-  const nickname = isActive ? `Active - ${count}/8 Next` : `${count}/8 In Queue`;
+  let nickname;
+  if (activeCount === 0) {
+    nickname = `${count}/8 In Queue`;
+  } else if (activeCount === 1) {
+    nickname = `Active - ${count}/8 Next`;
+  } else {
+    nickname = `${activeCount} Active (${count}/8 Next)`;
+  }
   
   // Create progress bar for status
   let progressBar;
-  if (isActive) {
-    // Active queue: yellow for next queue players, green for the rest (total 8)
-    const yellowSquares = '🟨'.repeat(count);
-    const greenSquares = '🟩'.repeat(8 - count);
-    progressBar = yellowSquares + greenSquares;
-  } else {
-    // Normal queue: green for filled, gray for empty
+  if (activeCount === 0) {
+    // No active queue: green for filled, gray for empty
     const filledSquares = '🟩'.repeat(count);
     const emptySquares = '⬜'.repeat(8 - count);
     progressBar = filledSquares + emptySquares;
+  } else if (activeCount === 1) {
+    // 1 active queue: all green + yellow for next queue
+    const yellowSquares = '🟨'.repeat(count);
+    const greenSquares = '🟩'.repeat(8 - count);
+    progressBar = yellowSquares + greenSquares;
+  } else if (activeCount === 2) {
+    // 2 active queues: all yellow + red for next queue
+    const redSquares = '🟧'.repeat(count);
+    const yellowSquares = '🟨'.repeat(8 - count);
+    progressBar = redSquares + yellowSquares;
+  } else {
+    // 3+ active queues: all red + purple for next queue
+    const purpleSquares = '🟥'.repeat(count);
+    const redSquares = '🟧'.repeat(8 - count);
+    progressBar = purpleSquares + redSquares;
   }
 
   // Update bot status (online/offline)
@@ -173,9 +191,8 @@ async function updateQueueInfo() {
   try {
     const channel = await client.channels.fetch(LOG_CHANNEL_ID);
     if (channel && channel.isTextBased()) {
-      const statusEmoji = isActive ? "✅" : "❌";
       const onlineStatus = shouldBeOnline ? "Online 🟢" : "Offline ⚫";
-      const message = `📊 **Queue Update:**\n- Players in Queue: ${count}/8\n- Progress: ${progressBar}\n- Active Queue: ${isActive ? "Yes" : "No"} ${statusEmoji}\n- Bot Status: ${onlineStatus}`;
+      const message = `📊 **Queue Update:**\n- Players in Queue: ${count}/8\n- Progress: ${progressBar}\n- Active Queues: ${activeCount}\n- Bot Status: ${onlineStatus}`;
       await channel.send(message);
       console.log("✅ Logged to channel");
     }
