@@ -124,7 +124,7 @@ async function updateQueueInfo() {
   } else if (activeCount === 1) {
     nickname = `Active - ${count}/8 Next`;
   } else {
-    nickname = `${activeCount} Active - ${count}/8 Next`;
+    nickname = `${activeCount} Active (${count}/8 Next)`;
   }
   
   // Create progress bar for status
