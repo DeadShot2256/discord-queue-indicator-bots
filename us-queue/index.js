@@ -135,23 +135,20 @@ async function updateQueueInfo() {
     const emptySquares = '⬜'.repeat(8 - count);
     progressBar = filledSquares + emptySquares;
   } else if (activeCount === 1) {
-    // 1 active queue: green filled + yellow next queue
-    const greenSquares = '🟩'.repeat(8);
+    // 1 active queue: all green + yellow for next queue
     const yellowSquares = '🟨'.repeat(count);
-    const emptySquares = '⬜'.repeat(8 - count);
-    progressBar = greenSquares + yellowSquares + emptySquares;
+    const greenSquares = '🟩'.repeat(8 - count);
+    progressBar = yellowSquares + greenSquares;
   } else if (activeCount === 2) {
-    // 2 active queues: all yellow + red next queue
-    const yellowSquares = '🟨'.repeat(8);
+    // 2 active queues: all yellow + red for next queue
     const redSquares = '🟥'.repeat(count);
-    const emptySquares = '⬜'.repeat(8 - count);
-    progressBar = yellowSquares + redSquares + emptySquares;
+    const yellowSquares = '🟨'.repeat(8 - count);
+    progressBar = redSquares + yellowSquares;
   } else {
-    // 3+ active queues: all red + purple next queue
-    const redSquares = '🟥'.repeat(8);
+    // 3+ active queues: all red + purple for next queue
     const purpleSquares = '🟪'.repeat(count);
-    const emptySquares = '⬜'.repeat(8 - count);
-    progressBar = redSquares + purpleSquares + emptySquares;
+    const redSquares = '🟥'.repeat(8 - count);
+    progressBar = purpleSquares + redSquares;
   }
 
   // Update bot status (online/offline)
