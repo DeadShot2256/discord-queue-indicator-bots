@@ -1,0 +1,15 @@
+{
+  "name": "4-tdm-queue-bot",
+  "version": "1.0.0",
+  "description": "16-player TDM Queue Indicator Bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "discord.js": "^14.25.1",
+    "dotenv": "^17.2.3",
+    "node-fetch": "^3.3.2"
+  }
+}
