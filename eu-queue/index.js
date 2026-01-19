@@ -121,8 +121,6 @@ async function updateQueueInfo() {
   let nickname;
   if (activeCount === 0) {
     nickname = `${count}/8 In Queue`;
-  } else if (activeCount === 1) {
-    nickname = `Active - ${count}/8 Next`;
   } else {
     nickname = `${activeCount} Active (${count}/8 Next)`;
   }
