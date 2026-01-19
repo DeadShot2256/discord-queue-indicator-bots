@@ -10,10 +10,10 @@ import 'dotenv/config';
 // ----------------
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN_BOT6;  // Update this env var name
 const NEATQUEUE_API_KEY = process.env.NEATQUEUE_API_KEY;
-const QUEUE_ID = "YOUR_NEW_QUEUE_ID_HERE";  // Update with new queue ID
+const QUEUE_ID = "1461474834725732385";  // Update with new queue ID
 const MATCH_ID = "1381807913563324466";  // Update if different
 const UPDATE_INTERVAL_MS = 10000;
-const LOG_CHANNEL_ID = "YOUR_LOG_CHANNEL_ID_HERE";  // Update with channel ID
+const LOG_CHANNEL_ID = "1437635073179517019";  // Update with channel ID
 const GUILD_ID = "1381807913563324466";
 
 // ----------------
