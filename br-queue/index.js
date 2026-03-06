@@ -76,9 +76,8 @@ async function getActiveQueueCount() {
     }
     
     // Count how many times the QUEUE_ID appears in the response
-    const responseText = JSON.stringify(data);
-    const matches = responseText.match(new RegExp(QUEUE_ID, 'g'));
-    return matches ? matches.length : 0;
+    return Object.keys(data).length;
+    
   } catch (err) {
     console.error("❌ Fetch Error (match):", err);
     return 0;
