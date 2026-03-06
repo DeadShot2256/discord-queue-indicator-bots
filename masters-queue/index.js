@@ -69,15 +69,14 @@ async function getActiveQueueCount() {
       return 0;
     }
     const data = await response.json();
-    
-    // Check if response is empty object (no active queue)
-    if (Object.keys(data).length === 0) {
-      return 0;
-    }
-    
-    // Count how many times the QUEUE_ID appears in the response
-    return Object.keys(data).length;
-    
+
+    if (Object.keys(data).length === 0) return 0;
+
+    // Only count matches that belong to THIS queue
+    return Object.values(data).filter(
+      match => match.queue_channel_id === QUEUE_ID
+    ).length;
+
   } catch (err) {
     console.error("❌ Fetch Error (match):", err);
     return 0;
